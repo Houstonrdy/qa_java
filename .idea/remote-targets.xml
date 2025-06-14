@@ -2,19 +2,19 @@
 <project version="4">
   <component name="RemoteTargetsManager">
     <targets>
-      <target name="WSL" type="wsl" uuid="47daca0e-fb33-4fa3-bd02-8fd162e46479">
+      <target name="WSL" type="wsl" uuid="4f94ebc5-718d-4b2b-9e18-bf4b4499f56b">
         <config>
           <option name="distributionMsId" value="Ubuntu" />
         </config>
-        <ContributedStateBase type="JavaLanguageRuntime">
-          <config>
-            <option name="homePath" value="/usr/lib/jvm/jdk-21.0.6-oracle-x64" />
-          </config>
-        </ContributedStateBase>
         <ContributedStateBase type="MavenRuntime">
           <config>
             <option name="homePath" value="/usr/share/maven" />
             <option name="versionString" value="3.6.3" />
+          </config>
+        </ContributedStateBase>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config>
+            <option name="homePath" value="/usr/lib/jvm/jdk-21.0.6-oracle-x64" />
           </config>
         </ContributedStateBase>
       </target>
