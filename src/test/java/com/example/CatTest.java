@@ -15,19 +15,36 @@ class CatTest {
     private Feline mockFeline;
 
     @Test
-    void testGetSound() {
+    void testGetSoundReturnsCorrectValue() {
         Cat cat = new Cat(mockFeline);
-        assertEquals("Мяу", cat.getSound());
+        String actualSound = cat.getSound();
+        assertEquals("Мяу", actualSound);
     }
 
     @Test
-    void testGetFood() throws Exception {
-        when(mockFeline.eatMeat()).thenReturn(List.of("Мясо", "Рыба"));
-
+    void testGetFoodReturnsCorrectValues() throws Exception {
+        List<String> expectedFood = List.of("Мясо", "Рыба");
+        when(mockFeline.eatMeat()).thenReturn(expectedFood);
         Cat cat = new Cat(mockFeline);
         List<String> actualFood = cat.getFood();
+        assertEquals(expectedFood, actualFood);
+    }
 
-        assertEquals(List.of("Мясо", "Рыба"), actualFood);
+    @Test
+    void testGetFoodCallsEatMeatOnce() throws Exception {
+        List<String> expectedFood = List.of("Птица", "Кость");
+        when(mockFeline.eatMeat()).thenReturn(expectedFood);
+        Cat cat = new Cat(mockFeline);
+        cat.getFood();
         verify(mockFeline, times(1)).eatMeat();
+    }
+
+    @Test
+    void testGetFoodWithSingleItemReturnsCorrectValue() throws Exception {
+        List<String> expectedFood = List.of("Фарш");
+        when(mockFeline.eatMeat()).thenReturn(expectedFood);
+        Cat cat = new Cat(mockFeline);
+        List<String> actualFood = cat.getFood();
+        assertEquals(expectedFood, actualFood);
     }
 }

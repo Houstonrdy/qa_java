@@ -1,10 +1,16 @@
 package com.example;
 
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -14,43 +20,53 @@ class LionTest {
     @Mock
     private Feline mockFeline;
 
-    @Test
-    void testDoesHaveManeForMale() throws Exception {
-        Lion lion = new Lion("Самец", mockFeline);
-        assertTrue(lion.doesHaveMane());
+    @ParameterizedTest
+    @CsvSource({"Самец, true", "Самка, false"})
+    void testDoesHaveMane(String sex, boolean expected) throws Exception {
+        Lion lion = new Lion(sex, mockFeline);
+        assertEquals(expected, lion.doesHaveMane());
     }
 
-    @Test
-    void testDoesHaveManeForFemale() throws Exception {
-        Lion lion = new Lion("Самка", mockFeline);
-        assertFalse(lion.doesHaveMane());
+    static Stream<Integer> kittenCounts() {
+        return Stream.of(0, 1, 3, 5);
     }
 
-    @Test
-    void testGetKittens() throws Exception {
-        when(mockFeline.getKittens()).thenReturn(1);
+    @ParameterizedTest
+    @MethodSource("kittenCounts")
+    void testGetKittens(int count) throws Exception {
+        when(mockFeline.getKittens()).thenReturn(count);
 
         Lion lion = new Lion("Самец", mockFeline);
-        assertEquals(1, lion.getKittens());
+        assertEquals(count, lion.getKittens());
 
         verify(mockFeline).getKittens();
     }
 
-    @Test
-    void testGetFood() throws Exception {
-        when(mockFeline.getFood("Хищник")).thenReturn(List.of("Животные", "Птицы", "Рыба"));
+    static Stream<Arguments> foodProvider() {
+        return Stream.of(
+                Arguments.of(List.of("Животные", "Птицы", "Рыба")),
+                Arguments.of(List.of("Мясо")),
+                Arguments.of(List.of("Корм для кошек", "Мышки"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("foodProvider")
+    void testGetFood(List<String> foodList) throws Exception {
+        when(mockFeline.getFood("Хищник")).thenReturn(foodList);
 
         Lion lion = new Lion("Самец", mockFeline);
-        assertEquals(List.of("Животные", "Птицы", "Рыба"), lion.getFood());
+        assertIterableEquals(foodList, lion.getFood());
 
         verify(mockFeline).getFood("Хищник");
     }
 
-    @Test
-    void testInvalidSexThrowsException() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"Неизвестно", "Средний пол", "Другое"})
+    void testInvalidSexThrowsException(String invalidSex) {
         Exception exception = assertThrows(
                 Exception.class,
-                () -> new Lion("Неизвестно", mockFeline)
+                () -> new Lion(invalidSex, mockFeline)
         );
         assertEquals(
                 "Используйте допустимые значения пола животного - самец или самка",

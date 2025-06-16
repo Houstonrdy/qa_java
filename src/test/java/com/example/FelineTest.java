@@ -1,6 +1,8 @@
 package com.example;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,13 +20,15 @@ class FelineTest {
         assertEquals("Кошачьи", feline.getFamily());
     }
 
-    @Test
-    void testGetKittensDefault() {
-        assertEquals(1, feline.getKittens());
+    @ParameterizedTest
+    @CsvSource({"0", "1", "5"})
+    void testGetKittensWithCustomValue(int kittensCount) {
+        int result = feline.getKittens(kittensCount);
+        assertEquals(Math.max(0, kittensCount), result);
     }
 
     @Test
-    void testGetKittensWithCustomValue() {
-        assertEquals(5, feline.getKittens(5));
+    void testGetKittensDefault() {
+        assertEquals(1, feline.getKittens());
     }
 }
